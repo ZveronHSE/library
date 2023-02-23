@@ -17,6 +17,7 @@ data class GrpcProps(
     data class GrpcServerProps(
         var logging: Boolean = true
     )
+
     data class ApiGatewayProps(
         var metadata: Boolean = false
     )

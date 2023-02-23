@@ -16,7 +16,9 @@ import ru.zveron.library.grpc.interceptor.model.MethodType
 import ru.zveron.library.grpc.util.GrpcUtils.toJson
 
 open class LoggingClientInterceptor : ClientInterceptor {
-    companion object : KLogging()
+    companion object : KLogging() {
+        const val TYPE_CALL = "client"
+    }
 
     override fun <ReqT : Any, RespT : Any> interceptCall(
         method: MethodDescriptor<ReqT, RespT>,
@@ -51,23 +53,19 @@ open class LoggingClientInterceptor : ClientInterceptor {
         method: MethodDescriptor<ReqT, RespT>,
         message: Any
     ) {
-        val markers = mutableListOf<LogstashMarker>(
-            Markers.append(LogstashKey.ENDPOINT_DIRECTION_KEY, methodType),
-            Markers.append(LogstashKey.ENDPOINT_KEY, method.bareMethodName)
-        )
-
         val body = (message as GeneratedMessageV3)
 
-        markers.addBodyToLog(LogstashKey.BODY_KEY, body.toJson())
+        val markers = mutableListOf<LogstashMarker>(
+            Markers.append(LogstashKey.ENDPOINT_DIRECTION_KEY, methodType),
+            Markers.append(LogstashKey.ENDPOINT_KEY, method.bareMethodName),
+            Markers.append(LogstashKey.TYPE_CALL_KEY, TYPE_CALL),
+            Markers.appendRaw(LogstashKey.BODY_KEY, body.toJson())
+        )
 
         if (methodType == MethodType.REQUEST) {
-            logger.info(Markers.aggregate(markers)) { "service: ${method.serviceName}" }
+            logger.info(Markers.aggregate(markers)) { "$TYPE_CALL: ${method.serviceName}" }
         } else if (logger.isDebugEnabled) {
-            logger.debug(Markers.aggregate(markers)) { "service: ${method.serviceName}" }
+            logger.debug(Markers.aggregate(markers)) { "$TYPE_CALL: ${method.serviceName}" }
         }
-    }
-
-    fun MutableList<LogstashMarker>.addBodyToLog(key: String, json: String) {
-        this.add(Markers.appendRaw(key, json))
     }
 }
