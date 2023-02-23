@@ -24,7 +24,7 @@ class LoggingServerInterceptor : ServerInterceptor {
         const val TYPE_CALL = "server"
     }
 
-    override fun <ReqT : Any, RespT : Any> interceptCall(
+    final override fun <ReqT : Any, RespT : Any> interceptCall(
         call: ServerCall<ReqT, RespT>,
         headers: Metadata?,
         next: ServerCallHandler<ReqT, RespT>

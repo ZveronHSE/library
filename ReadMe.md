@@ -12,9 +12,8 @@ platform:
       logging: true
 ```
 
-Также вы можете переопределить методы и настроить логгирование по своему.
-
-Для клиентов нужно только наследовать от LoggingClientInterceptor, для серверов LoggingServerInterceptor
+Также вы можете переопределить метод logMessage для настройки логгирования по своему. Для клиентов нужно только 
+наследовать от LoggingClientInterceptor, для серверов LoggingServerInterceptor
 
 ## ApiGateway 
 Если у вас сервис имеет внешние эндпоинты, можно будет заиспользовать интерцептор MetadataApiGatewayInterceptor, 

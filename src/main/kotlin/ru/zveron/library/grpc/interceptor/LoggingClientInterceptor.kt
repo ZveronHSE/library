@@ -20,7 +20,7 @@ open class LoggingClientInterceptor : ClientInterceptor {
         const val TYPE_CALL = "client"
     }
 
-    override fun <ReqT : Any, RespT : Any> interceptCall(
+    final override fun <ReqT : Any, RespT : Any> interceptCall(
         method: MethodDescriptor<ReqT, RespT>,
         callOptions: CallOptions,
         channel: Channel
