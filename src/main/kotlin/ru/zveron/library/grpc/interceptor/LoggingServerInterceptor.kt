@@ -17,9 +17,7 @@ import ru.zveron.library.grpc.interceptor.model.MethodType
 import ru.zveron.library.grpc.util.GrpcUtils.toJson
 
 
-@GrpcGlobalServerInterceptor
-@ConditionalOnProperty("platform.grpc.server.logging", havingValue = "true", matchIfMissing = true)
-class LoggingServerInterceptor : ServerInterceptor {
+open class LoggingServerInterceptor : ServerInterceptor {
     companion object : KLogging() {
         const val TYPE_CALL = "server"
     }
@@ -45,7 +43,7 @@ class LoggingServerInterceptor : ServerInterceptor {
     }
 
 
-    fun <ReqT : Any?, RespT : Any?> logMessage(
+    open fun <ReqT : Any?, RespT : Any?> logMessage(
         methodType: MethodType,
         call: ServerCall<ReqT, RespT>,
         message: Any

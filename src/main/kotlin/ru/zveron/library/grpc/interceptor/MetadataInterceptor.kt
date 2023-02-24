@@ -5,12 +5,10 @@ import io.grpc.ServerCall
 import io.grpc.kotlin.CoroutineContextServerInterceptor
 import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
-import ru.zveron.library.grpc.interceptor.model.ApiGatewayElement
+import ru.zveron.library.grpc.interceptor.model.MetadataElement
 import kotlin.coroutines.CoroutineContext
 
-@GrpcGlobalServerInterceptor
-@ConditionalOnProperty("platform.grpc.apigateway.metadata", havingValue = "true", matchIfMissing = true)
-class MetadataApiGatewayInterceptor : CoroutineContextServerInterceptor() {
+class MetadataInterceptor : CoroutineContextServerInterceptor() {
     companion object {
         private val profileIdKey = Metadata.Key.of("profile_id", Metadata.ASCII_STRING_MARSHALLER)
     }
@@ -18,6 +16,6 @@ class MetadataApiGatewayInterceptor : CoroutineContextServerInterceptor() {
     override fun coroutineContext(call: ServerCall<*, *>, headers: Metadata): CoroutineContext {
         val profileId = headers.get(profileIdKey)?.toLong()
 
-        return ApiGatewayElement(profileId = profileId)
+        return MetadataElement(profileId = profileId)
     }
 }
