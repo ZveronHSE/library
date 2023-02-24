@@ -59,7 +59,7 @@ open class LoggingServerInterceptor : ServerInterceptor {
 
         if (methodType == MethodType.REQUEST) {
             logger.info(Markers.aggregate(markers)) { "$TYPE_CALL: ${call.methodDescriptor.serviceName}" }
-        } else if (logger.isDebugEnabled) {
+        } else {
             logger.debug(Markers.aggregate(markers)) { "$TYPE_CALL: ${call.methodDescriptor.serviceName}" }
         }
     }
