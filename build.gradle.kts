@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     idea
+    `maven-publish`
 
     id("org.springframework.boot")
     id("io.spring.dependency-management")
@@ -50,4 +51,19 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = project.group.toString()
+            version = project.version.toString()
+
+            from(components["java"])
+
+            afterEvaluate {
+                artifactId = tasks.jar.get().archiveBaseName.get()
+            }
+        }
+    }
 }
