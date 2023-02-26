@@ -2,13 +2,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     idea
+    `maven-publish`
 
-    id("org.springframework.boot")
     id("io.spring.dependency-management")
 
     kotlin("jvm")
     kotlin("plugin.spring")
 }
+
+val grpcVersion: String by project
+val grpcKotlinVersion: String by project
+val protobufVersion: String by project
 
 group = "ru.zveron"
 version = "0.0.1-SNAPSHOT"
@@ -19,11 +23,18 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    runtimeOnly("org.springframework.boot:spring-boot-dependencies:2.7.4")
+    // Grpc
+    implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
+    implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
+    compileOnly("com.google.protobuf:protobuf-java-util:$protobufVersion")
+
+    // Логгирование
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
+
+    // Для компиляции проекта
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinCompile> {
@@ -35,4 +46,15 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = project.group.toString()
+            version = project.version.toString()
+
+            from(components["java"])
+        }
+    }
 }
