@@ -4,7 +4,6 @@ plugins {
     idea
     `maven-publish`
 
-    id("org.springframework.boot")
     id("io.spring.dependency-management")
 
     kotlin("jvm")
@@ -24,21 +23,17 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude("org.springframework.boot", "spring-boot-starter-tomcat")
-    }
-
-    // Grpc корутины, сервисы и клиенты
+    runtimeOnly("org.springframework.boot:spring-boot-dependencies")
+    // Grpc
     implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
     implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
-    implementation("io.grpc:grpc-stub:$grpcVersion")
-    implementation("io.grpc:grpc-core:$grpcVersion")
     compileOnly("com.google.protobuf:protobuf-java-util:$protobufVersion")
 
     // Логгирование
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
     implementation("net.logstash.logback:logstash-logback-encoder:7.2")
 
+    // Для компиляции проекта
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
@@ -60,10 +55,6 @@ publishing {
             version = project.version.toString()
 
             from(components["java"])
-
-            afterEvaluate {
-                artifactId = tasks.jar.get().archiveBaseName.get()
-            }
         }
     }
 }
