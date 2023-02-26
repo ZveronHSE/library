@@ -19,15 +19,12 @@ object GrpcUtils {
      * @param requiredAuthorized требуется ли авторизация пользователя
      */
     fun getMetadata(coroutineContext: CoroutineContext, requiredAuthorized: Boolean = false): Metadata {
-        val metadataElement = coroutineContext[MetadataElement]
-        val metadata = Metadata(
-            profileId = metadataElement?.profileId
-        )
+        val metadata = coroutineContext[MetadataElement]?.metadata
 
-        if (requiredAuthorized && metadata.profileId == null) {
+        if (requiredAuthorized && metadata?.profileId == null) {
             throw PlatformException(Status.UNAUTHENTICATED, "user should be authorized for this endpoint")
         }
 
-        return metadata
+        return metadata ?: Metadata()
     }
 }
