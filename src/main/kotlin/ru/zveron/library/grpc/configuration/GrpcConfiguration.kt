@@ -7,7 +7,6 @@ import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import ru.zveron.library.grpc.interceptor.LoggingClientInterceptor
 import ru.zveron.library.grpc.interceptor.LoggingServerInterceptor

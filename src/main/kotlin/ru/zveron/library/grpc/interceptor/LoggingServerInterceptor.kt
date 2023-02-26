@@ -8,10 +8,8 @@ import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
 import mu.KLogging
-import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor
 import net.logstash.logback.marker.LogstashMarker
 import net.logstash.logback.marker.Markers
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import ru.zveron.library.grpc.interceptor.model.LogstashKey
 import ru.zveron.library.grpc.interceptor.model.MethodType
 import ru.zveron.library.grpc.util.GrpcUtils.toJson
