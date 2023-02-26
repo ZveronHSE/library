@@ -25,7 +25,7 @@ class GrpcConfiguration {
     @Order(2)
     @GrpcGlobalClientInterceptor
     @ConditionalOnMissingBean(LoggingClientInterceptor::class)
-    @ConditionalOnProperty("platform.grpc.client.logging", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty("platform.grpc.client.logging-enabled", havingValue = "true", matchIfMissing = true)
     fun loggingClientInterceptor(): ClientInterceptor {
         return LoggingClientInterceptor()
     }
@@ -33,7 +33,7 @@ class GrpcConfiguration {
     @Order(2)
     @GrpcGlobalServerInterceptor
     @ConditionalOnMissingBean(LoggingServerInterceptor::class)
-    @ConditionalOnProperty("platform.grpc.server.logging", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty("platform.grpc.server.logging-enabled", havingValue = "true", matchIfMissing = true)
     fun loggingServerInterceptor(): ServerInterceptor {
         return LoggingServerInterceptor()
     }

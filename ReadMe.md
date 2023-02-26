@@ -7,9 +7,9 @@
 platform:
   grpc:
     client:
-      logging: true
+      logging-enabled: true
     server:
-      logging: true
+      logging-enabled: true
 ```
 
 Также вы можете переопределить метод logMessage для настройки логгирования по своему. Для клиентов нужно только 
