@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    runtimeOnly("org.springframework.boot:spring-boot-dependencies")
+    runtimeOnly("org.springframework.boot:spring-boot-dependencies:2.7.4")
     // Grpc
     implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
     implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
