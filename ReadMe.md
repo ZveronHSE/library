@@ -16,13 +16,23 @@ platform:
 наследовать от LoggingClientInterceptor, для серверов LoggingServerInterceptor
 
 ## ApiGateway 
-Если у вас сервис имеет внешние эндпоинты, можно будет заиспользовать интерцептор MetadataApiGatewayInterceptor, 
+Если у вас сервис имеет внешние эндпоинты, можно будет заиспользовать интерцептор MetadataApiGatewayInterceptor,
 который отвечает за то, чтобы получить все метаданные от ApiGateway и пользоваться этим. По умолчанию выключено.
 
-Чтобы включить: 
+Чтобы включить:
+
 ```yaml
 platform:
   grpc:
     apigateway:
       metadata: true
+```
+
+Чтобы получить все метаданные от ApiGateway, можно будет вызвать метод:
+
+```kotlin
+GrpcUtils.getMetadata(
+    coroutineContext, // ваш текущий короутиновый контекст
+    requiredAuthorized = true // требуется ли авторизация, если userId нет - выбросит экспешн
+)
 ```

@@ -13,10 +13,15 @@ object GrpcUtils {
 
     fun <T : GeneratedMessageV3> T.toJson(): String = protoJsonPrinter.print(this)
 
+    /**
+     * Возвращает все метаданные от апигетвея
+     * @param coroutineContext текущий короутиновый контекст
+     * @param requiredAuthorized требуется ли авторизация пользователя
+     */
     fun getMetadata(coroutineContext: CoroutineContext, requiredAuthorized: Boolean = false): Metadata {
         val metadataElement = coroutineContext[MetadataElement]
         val metadata = Metadata(
-            profileId =  metadataElement?.profileId
+            profileId = metadataElement?.profileId
         )
 
         if (requiredAuthorized && metadata.profileId == null) {
