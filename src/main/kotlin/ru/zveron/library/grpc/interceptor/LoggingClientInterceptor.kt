@@ -59,13 +59,14 @@ open class LoggingClientInterceptor : ClientInterceptor {
             Markers.append(LogstashKey.ENDPOINT_DIRECTION_KEY, methodType),
             Markers.append(LogstashKey.ENDPOINT_KEY, method.bareMethodName),
             Markers.append(LogstashKey.TYPE_CALL_KEY, TYPE_CALL),
+            Markers.append(LogstashKey.SERVICE_NAME_KEY, method.serviceName),
             Markers.appendRaw(LogstashKey.BODY_KEY, body.toJson())
         )
 
         if (methodType == MethodType.REQUEST) {
-            logger.info(Markers.aggregate(markers)) { "$TYPE_CALL: ${method.serviceName}" }
+            logger.info(Markers.aggregate(markers)) { "request" }
         } else {
-            logger.debug(Markers.aggregate(markers)) { "$TYPE_CALL: ${method.serviceName}" }
+            logger.debug(Markers.aggregate(markers)) { "response" }
         }
     }
 }
