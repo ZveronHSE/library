@@ -46,6 +46,11 @@ open class LoggingServerInterceptor : ServerInterceptor {
         call: ServerCall<ReqT, RespT>,
         message: Any
     ) {
+        // Чтобы при рефлексии от апигетвея или постмана не было стремных информаций, нам такое сейчас не нужно
+        if (call.methodDescriptor.bareMethodName == "ServerReflectionInfo") {
+            return
+        }
+
         val body = (message as GeneratedMessageV3)
 
         val markers = mutableListOf<LogstashMarker>(
