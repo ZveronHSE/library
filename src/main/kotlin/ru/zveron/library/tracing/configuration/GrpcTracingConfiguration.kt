@@ -11,20 +11,24 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 
 @Configuration
 @AutoConfigureAfter(OpenTelemetry::class)
 @ConditionalOnProperty("platform.tracing.grpc", havingValue = "true", matchIfMissing = true)
 class GrpcTracingConfiguration {
     @Bean
+    @Order(1)
     @ConditionalOnMissingBean(GrpcTelemetry::class)
     fun grpcOpenTelemetry(openTelemetry: OpenTelemetry): GrpcTelemetry =
         GrpcTelemetry.create(openTelemetry)
 
+    @Order(1)
     @GrpcGlobalServerInterceptor
     fun grpcServerTracing(grpcTelemetry: GrpcTelemetry): ServerInterceptor =
         grpcTelemetry.newServerInterceptor()
 
+    @Order(1)
     @GrpcGlobalClientInterceptor
     fun grpcClientTracing(grpcTelemetry: GrpcTelemetry): ClientInterceptor =
         grpcTelemetry.newClientInterceptor()
