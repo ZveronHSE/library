@@ -27,8 +27,6 @@ repositories {
 
 dependencies {
     runtimeOnly("org.springframework.boot:spring-boot-dependencies:2.7.4")
-    implementation("io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE")
-
 
     // Grpc
     implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
@@ -48,7 +46,6 @@ dependencies {
 
     // tracing database
     api("io.opentelemetry.instrumentation:opentelemetry-jdbc:$opentelemetryApiVersion")
-    api("io.opentelemetry.instrumentation:opentelemetry-r2dbc-1.0:$opentelemetryApiVersion")
     // it needs for creating instance database pooling
     implementation("com.zaxxer:HikariCP:5.0.1")
 

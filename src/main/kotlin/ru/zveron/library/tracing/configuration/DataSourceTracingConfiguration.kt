@@ -17,13 +17,10 @@ class DataSourceTracingConfiguration {
     @Value("\${spring.datasource.url:}")
     private lateinit var jdbcUrl: String
 
-    @Value("\${spring.r2dbc.url:}")
-    private lateinit var r2dbcUrl: String
-
-    @Value("\${spring.datasource.username}")
+    @Value("\${spring.datasource.username:}")
     private lateinit var username: String
 
-    @Value("\${spring.datasource.password}")
+    @Value("\${spring.datasource.password:}")
     private lateinit var password: String
 
     @Bean
@@ -38,22 +35,4 @@ class DataSourceTracingConfiguration {
 
         return OpenTelemetryDataSource(dataSource, openTelemetry)
     }
-
-//    @Bean
-//    @ConditionalOnProperty("platform.tracing.r2dbc", havingValue = "true", matchIfMissing = true)
-//    fun initializer(
-//        openTelemetry: OpenTelemetry,
-//    ): ConnectionFactoryInitializer {
-//        val factoryOptions = ConnectionFactoryOptions.parse(r2dbcUrl)
-//            .mutate()
-//            .option(ConnectionFactoryOptions.USER, username)
-//            .option(ConnectionFactoryOptions.PASSWORD, password)
-//            .build()
-//
-//        val connectionFactory = PostgresqlConnectionFactory(factoryOptions)
-//
-//        return R2dbcTelemetry
-//            .create(openTelemetry)
-//            .wrapConnectionFactory(connectionFactory, factoryOptions)
-//    }
 }
