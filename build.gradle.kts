@@ -26,7 +26,9 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:2.7.4")
     runtimeOnly("org.springframework.boot:spring-boot-dependencies:2.7.4")
+
 
     // Grpc
     implementation("net.devh:grpc-spring-boot-starter:2.14.0.RELEASE")
