@@ -14,10 +14,10 @@ import javax.sql.DataSource
 @Configuration
 @AutoConfigureAfter(OpenTelemetry::class)
 class DataSourceTracingConfiguration {
-    @Value("\${spring.datasource.url}")
+    @Value("\${spring.datasource.url:}")
     private lateinit var jdbcUrl: String
 
-    @Value("\${spring.r2dbc.url}")
+    @Value("\${spring.r2dbc.url:}")
     private lateinit var r2dbcUrl: String
 
     @Value("\${spring.datasource.username}")
