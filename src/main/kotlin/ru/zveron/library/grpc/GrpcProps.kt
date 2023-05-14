@@ -11,11 +11,13 @@ data class GrpcProps(
     var apigateway: ApiGatewayProps = ApiGatewayProps(),
 ) {
     data class GrpcClientProps(
-        var loggingEnabled: Boolean = false
+        var loggingEnabled: Boolean = false,
+        var tracingEnabled: Boolean = false,
     )
 
     data class GrpcServerProps(
-        var loggingEnabled: Boolean = false
+        var loggingEnabled: Boolean = false,
+        var tracingEnabled: Boolean = false,
     )
 
     data class ApiGatewayProps(
