@@ -1,0 +1,13 @@
+platform:
+  grpc:
+    apigateway:
+      metadata: true
+    client:
+      logging-enabled: true
+      tracing-enabled: true
+    server:
+      logging-enabled: true
+      tracing-enabled: true
+
+  tracing:
+    jdbc: true

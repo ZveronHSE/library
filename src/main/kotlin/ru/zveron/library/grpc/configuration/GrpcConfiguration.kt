@@ -13,7 +13,8 @@ import org.springframework.core.annotation.Order
 import ru.zveron.library.grpc.interceptor.LoggingClientInterceptor
 import ru.zveron.library.grpc.interceptor.LoggingServerInterceptor
 import ru.zveron.library.grpc.interceptor.MetadataInterceptor
-import ru.zveron.library.grpc.interceptor.TracingServerInterceptor
+import ru.zveron.library.grpc.interceptor.tracing.TracingClientInterceptor
+import ru.zveron.library.grpc.interceptor.tracing.TracingServerInterceptor
 
 @Configuration(proxyBeanMethods = false)
 @AutoConfigureAfter(OpenTelemetry::class)
@@ -22,40 +23,44 @@ class GrpcConfiguration {
     @GrpcGlobalServerInterceptor
     @ConditionalOnProperty("platform.grpc.server.tracing-enabled", havingValue = "true", matchIfMissing = true)
     fun tracingServerInterceptor(openTelemetry: OpenTelemetry): ServerInterceptor {
-        val tracing = openTelemetry.tracerProvider.tracerBuilder("TracingInterceptor").build()
+        val tracing = openTelemetry.tracerProvider
+            .tracerBuilder("TracingServerInterceptor")
+            .build()
 
         return TracingServerInterceptor(tracing)
     }
 
-//    @Order(1)
-//    @GrpcGlobalClientInterceptor
-//    @ConditionalOnProperty("platform.grpc.client.tracing-enabled", havingValue = "true", matchIfMissing = true)
-//    fun tracingClientInterceptor(openTelemetry: OpenTelemetry): ClientInterceptor {
-//        val tracing = openTelemetry.tracerProvider.tracerBuilder("TracingInterceptor").build()
-//
-//        return TracingServerInterceptor(tracing)
-//    }
-
     @Order(2)
+    @GrpcGlobalClientInterceptor
+    @ConditionalOnProperty("platform.grpc.client.tracing-enabled", havingValue = "true", matchIfMissing = true)
+    fun tracingClientInterceptor(openTelemetry: OpenTelemetry): ClientInterceptor {
+        val tracing = openTelemetry.tracerProvider
+            .tracerBuilder("TracingClientInterceptor")
+            .build()
+
+        return TracingClientInterceptor(tracing)
+    }
+
+    @Order(3)
     @GrpcGlobalServerInterceptor
     @ConditionalOnProperty("platform.grpc.apigateway.metadata", havingValue = "true", matchIfMissing = true)
     fun metadataInterceptor(): ServerInterceptor {
         return MetadataInterceptor()
     }
 
-    @Order(3)
-    @GrpcGlobalClientInterceptor
-    @ConditionalOnMissingBean(LoggingClientInterceptor::class)
-    @ConditionalOnProperty("platform.grpc.client.logging-enabled", havingValue = "true", matchIfMissing = true)
-    fun loggingClientInterceptor(): ClientInterceptor {
-        return LoggingClientInterceptor()
-    }
-
-    @Order(3)
+    @Order(4)
     @GrpcGlobalServerInterceptor
     @ConditionalOnMissingBean(LoggingServerInterceptor::class)
     @ConditionalOnProperty("platform.grpc.server.logging-enabled", havingValue = "true", matchIfMissing = true)
     fun loggingServerInterceptor(): ServerInterceptor {
         return LoggingServerInterceptor()
+    }
+
+    @Order(5)
+    @GrpcGlobalClientInterceptor
+    @ConditionalOnMissingBean(LoggingClientInterceptor::class)
+    @ConditionalOnProperty("platform.grpc.client.logging-enabled", havingValue = "true", matchIfMissing = true)
+    fun loggingClientInterceptor(): ClientInterceptor {
+        return LoggingClientInterceptor()
     }
 }

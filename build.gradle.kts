@@ -34,7 +34,7 @@ dependencies {
     compileOnly("com.google.protobuf:protobuf-java-util:$protobufVersion")
 
     // Logging
-    implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
     implementation("net.logstash.logback:logstash-logback-encoder:7.2")
 
     // Tracing
@@ -48,9 +48,6 @@ dependencies {
     api("io.opentelemetry.instrumentation:opentelemetry-jdbc:$opentelemetryApiVersion")
     // it needs for creating instance database pooling
     implementation("com.zaxxer:HikariCP:5.0.1")
-
-    // tracing grpc
-    api("io.opentelemetry.instrumentation:opentelemetry-grpc-1.6:$opentelemetryApiVersion")
 
     // add trace id to logback
     api("io.opentelemetry.instrumentation:opentelemetry-logback-1.0:1.9.2-alpha")
