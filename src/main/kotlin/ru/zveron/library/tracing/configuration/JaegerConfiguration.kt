@@ -5,6 +5,7 @@ import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.context.propagation.ContextPropagators
 import io.opentelemetry.exporter.jaeger.JaegerGrpcSpanExporter
+import io.opentelemetry.instrumentation.grpc.v1_6.GrpcTelemetry
 import io.opentelemetry.sdk.OpenTelemetrySdk
 import io.opentelemetry.sdk.resources.Resource
 import io.opentelemetry.sdk.trace.SdkTracerProvider
@@ -13,8 +14,10 @@ import io.opentelemetry.semconv.resource.attributes.ResourceAttributes
 import mu.KLogging
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import java.time.Duration
 
 @Configuration
@@ -69,4 +72,11 @@ class JaegerConfiguration {
 
         return openTelemetry
     }
+
+    @Bean
+    @Order(1)
+    @ConditionalOnMissingBean(GrpcTelemetry::class)
+    fun grpcOpenTelemetry(openTelemetry: OpenTelemetry): GrpcTelemetry =
+        GrpcTelemetry.create(openTelemetry)
+
 }
