@@ -1,6 +1,5 @@
 package ru.zveron.library.tracing.configuration
 
-import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.context.propagation.ContextPropagators
@@ -65,9 +64,8 @@ class JaegerConfiguration {
         val openTelemetry = OpenTelemetrySdk.builder()
             .setTracerProvider(sdkTracerProvider)
             .setPropagators(propagators)
-            .build()
+            .buildAndRegisterGlobal()
 
-        GlobalOpenTelemetry.set(openTelemetry)
         logger.info("Open Telemetry successfully initialized")
 
         return openTelemetry
