@@ -7,11 +7,14 @@ import io.grpc.Metadata
 import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
+import io.opentelemetry.api.trace.Span
 import mu.KLogging
 import net.logstash.logback.marker.LogstashMarker
 import net.logstash.logback.marker.Markers
+import org.slf4j.MDC
 import ru.zveron.library.grpc.interceptor.model.LogstashKey
 import ru.zveron.library.grpc.interceptor.model.MethodType
+import ru.zveron.library.grpc.interceptor.tracing.TracingHelper
 import ru.zveron.library.grpc.util.GrpcUtils.toJson
 
 
@@ -25,6 +28,9 @@ open class LoggingServerInterceptor : ServerInterceptor {
         headers: Metadata?,
         next: ServerCallHandler<ReqT, RespT>
     ): ServerCall.Listener<ReqT> {
+        // Костыль но мне похуй я ебала думать что тут пошло не так и почему нужно ВОТ так делать.
+        MDC.put(TracingHelper.traceIdKey.name(), Span.current().spanContext.traceId)
+
         val wrappedCall = object : ForwardingServerCall.SimpleForwardingServerCall<ReqT, RespT>(call) {
             override fun sendMessage(message: RespT) {
                 logMessage(MethodType.RESPONSE, call, message)
@@ -32,7 +38,12 @@ open class LoggingServerInterceptor : ServerInterceptor {
             }
         }
 
-        return object : ForwardingServerCallListener.SimpleForwardingServerCallListener<ReqT>(next.startCall(wrappedCall, headers)) {
+        return object : ForwardingServerCallListener.SimpleForwardingServerCallListener<ReqT>(
+            next.startCall(
+                wrappedCall,
+                headers
+            )
+        ) {
             override fun onMessage(message: ReqT) {
                 logMessage(MethodType.REQUEST, call, message)
                 super.onMessage(message)

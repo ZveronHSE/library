@@ -5,8 +5,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 
+@ComponentScan
 @Configuration
 @ConfigurationPropertiesScan
-@ComponentScan("ru.zveron.*")
 @EnableConfigurationProperties
 class PlatformConfiguration

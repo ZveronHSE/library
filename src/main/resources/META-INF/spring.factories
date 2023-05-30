@@ -1,0 +1,2 @@
+# Auto configurations
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=ru.zveron.library.PlatformConfiguration
