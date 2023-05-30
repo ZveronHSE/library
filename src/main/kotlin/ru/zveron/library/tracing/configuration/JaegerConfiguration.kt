@@ -1,6 +1,5 @@
 package ru.zveron.library.tracing.configuration
 
-import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.context.propagation.ContextPropagators
@@ -18,10 +17,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
+import org.springframework.core.env.Environment
 import java.time.Duration
 
 @Configuration
-class JaegerConfiguration {
+class JaegerConfiguration(
+    private val environment: Environment
+) {
 
     @Value("\${spring.application.name}")
     private val serviceName: String = ""
@@ -30,8 +32,11 @@ class JaegerConfiguration {
 
     @Bean
     fun jaegerSpanExporter(): JaegerGrpcSpanExporter {
+        val host = if (environment.activeProfiles[0] == "prod") "jaeger"
+        else "localhost"
+
         return JaegerGrpcSpanExporter.builder()
-            .setEndpoint("http://localhost:14250")
+            .setEndpoint("http://$host:14250")
             .setTimeout(Duration.ofSeconds(5))
             .build()
     }
@@ -65,9 +70,8 @@ class JaegerConfiguration {
         val openTelemetry = OpenTelemetrySdk.builder()
             .setTracerProvider(sdkTracerProvider)
             .setPropagators(propagators)
-            .build()
+            .buildAndRegisterGlobal()
 
-        GlobalOpenTelemetry.set(openTelemetry)
         logger.info("Open Telemetry successfully initialized")
 
         return openTelemetry
