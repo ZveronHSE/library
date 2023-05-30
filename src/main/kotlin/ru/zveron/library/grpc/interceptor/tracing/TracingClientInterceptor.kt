@@ -14,6 +14,7 @@ import io.opentelemetry.api.trace.SpanKind
 import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.context.Context
 import mu.KLogging
+import ru.zveron.library.grpc.interceptor.tracing.TracingHelper.onClose
 
 open class TracingClientInterceptor(
     private val tracer: Tracer
@@ -38,10 +39,8 @@ open class TracingClientInterceptor(
             object :
                 ForwardingClientCall.SimpleForwardingClientCall<ReqT, RespT>(channel.newCall(method, callOptions)) {
 
-
                 override fun sendMessage(message: ReqT) {
                     super.sendMessage(message)
-
                 }
 
                 override fun start(responseListener: Listener<RespT>, headers: Metadata) {
@@ -54,13 +53,7 @@ open class TracingClientInterceptor(
                             ForwardingClientCallListener.SimpleForwardingClientCallListener<RespT>(responseListener) {
 
                             override fun onClose(status: Status, trailers: io.grpc.Metadata) {
-                                if (!status.isOk && status.cause != null) {
-                                    val exception = status.asException()
-                                    TracingHelper.setExceptionStatus(span, exception)
-                                }
-
-                                span.setAttribute(TracingHelper.RPC_CODE, status.code.name)
-                                span.end()
+                                span.onClose(status)
                                 super.onClose(status, trailers)
                             }
                         }
@@ -70,5 +63,4 @@ open class TracingClientInterceptor(
             }
         }
     }
-
 }

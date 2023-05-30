@@ -13,7 +13,7 @@ import javax.sql.DataSource
 
 @Configuration
 @AutoConfigureAfter(OpenTelemetry::class)
-class DataSourceTracingConfiguration {
+class DataSourceTracingAutoConfiguration {
     @Value("\${spring.datasource.url:}")
     private lateinit var jdbcUrl: String
 

@@ -19,13 +19,15 @@ import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.context.Context
 import io.opentelemetry.semconv.trace.attributes.SemanticAttributes
 import mu.KLogging
+import ru.zveron.library.grpc.interceptor.tracing.TracingHelper.onClose
+import ru.zveron.library.grpc.interceptor.tracing.TracingHelper.setExceptionStatus
 
 open class TracingServerInterceptor(
     private val tracer: Tracer,
 ) : ServerInterceptor {
 
     companion object : KLogging() {
-        private val MESSAGE_TYPE = AttributeKey.stringKey("message.type")
+        private val MESSAGE_TYPE_KEY = AttributeKey.stringKey("message.type")
         private const val MESSAGE_EVENT = "message"
     }
 
@@ -53,47 +55,44 @@ open class TracingServerInterceptor(
 
             object : ForwardingServerCallListener.SimpleForwardingServerCallListener<ReqT>(
                 try {
-                    next.startCall(object : ForwardingServerCall.SimpleForwardingServerCall<ReqT, RespT>(call) {
-                        override fun sendMessage(message: RespT) {
-                            context.makeCurrent().use {
-                                super.sendMessage(message)
-                            }
+                    next.startCall(
+                        object : ForwardingServerCall.SimpleForwardingServerCall<ReqT, RespT>(call) {
+                            override fun sendMessage(message: RespT) {
+                                context.makeCurrent().use {
+                                    super.sendMessage(message)
+                                }
 
-                            span.addEvent(
-                                MESSAGE_EVENT, Attributes.of(
-                                    MESSAGE_TYPE,
-                                    "GET RESPONSE"
+                                span.addEvent(
+                                    MESSAGE_EVENT, Attributes.of(
+                                        MESSAGE_TYPE_KEY,
+                                        "GET RESPONSE"
+                                    )
                                 )
-                            )
-                        }
-
-                        override fun sendHeaders(headers: Metadata?) {
-                            headers?.put(TracingHelper.traceIdKey, span.spanContext.traceId)
-                            super.sendHeaders(headers)
-                        }
-
-                        override fun close(status: Status, trailers: Metadata) {
-                            super.close(status, trailers)
-                            if (!status.isOk && status.cause != null) {
-                                val exception = status.asException()
-                                TracingHelper.setExceptionStatus(span, exception)
                             }
 
-                            span.setAttribute(TracingHelper.RPC_CODE, status.code.name)
-                            span.end()
-                        }
+                            override fun sendHeaders(headers: Metadata?) {
+                                (headers ?: Metadata()).put(TracingHelper.traceIdKey, span.spanContext.traceId)
+                                super.sendHeaders(headers)
+                            }
 
-                    }, headers)
+                            override fun close(status: Status, trailers: Metadata) {
+                                super.close(status, trailers)
+                                span.onClose(status)
+                            }
+
+                        },
+                        headers
+                    )
                 } catch (ex: Exception) {
                     // catched if get exception in interceptors
-                    TracingHelper.setExceptionStatus(span, ex)
+                    span.setExceptionStatus(ex)
                     throw ex
                 }
             ) {
                 override fun onMessage(message: ReqT) {
                     span.addEvent(
                         MESSAGE_EVENT, Attributes.of(
-                            MESSAGE_TYPE,
+                            MESSAGE_TYPE_KEY,
                             "SEND REQUEST"
                         )
                     )
