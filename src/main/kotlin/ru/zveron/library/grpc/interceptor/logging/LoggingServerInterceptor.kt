@@ -1,4 +1,4 @@
-package ru.zveron.library.grpc.interceptor
+package ru.zveron.library.grpc.interceptor.logging
 
 import com.google.protobuf.GeneratedMessageV3
 import io.grpc.ForwardingServerCall

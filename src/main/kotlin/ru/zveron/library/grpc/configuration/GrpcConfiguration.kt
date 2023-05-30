@@ -10,9 +10,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
-import ru.zveron.library.grpc.interceptor.LoggingClientInterceptor
-import ru.zveron.library.grpc.interceptor.LoggingServerInterceptor
 import ru.zveron.library.grpc.interceptor.MetadataInterceptor
+import ru.zveron.library.grpc.interceptor.logging.LoggingClientInterceptor
+import ru.zveron.library.grpc.interceptor.logging.LoggingServerInterceptor
 import ru.zveron.library.grpc.interceptor.tracing.TracingClientInterceptor
 import ru.zveron.library.grpc.interceptor.tracing.TracingServerInterceptor
 
