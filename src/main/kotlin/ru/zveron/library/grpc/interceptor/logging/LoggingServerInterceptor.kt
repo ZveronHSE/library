@@ -39,10 +39,15 @@ open class LoggingServerInterceptor : ServerInterceptor {
         }
 
         return object : ForwardingServerCallListener.SimpleForwardingServerCallListener<ReqT>(
-            next.startCall(
-                wrappedCall,
-                headers
-            )
+            try {
+                next.startCall(
+                    wrappedCall,
+                    headers
+                )
+            } catch (ex: Exception) {
+                logger.error(ex) { "Failed execute request, message: ${ex.message}" }
+                throw ex
+            }
         ) {
             override fun onMessage(message: ReqT) {
                 logMessage(MethodType.REQUEST, call, message)

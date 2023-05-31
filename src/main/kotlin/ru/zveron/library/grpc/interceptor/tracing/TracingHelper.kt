@@ -17,7 +17,7 @@ object TracingHelper {
     fun Span.setExceptionStatus(exception: java.lang.Exception) {
         this.addEvent(
             EXCEPTION_EVENT, Attributes.of(
-                AttributeKey.stringKey("exception.detail"), exception.cause!!.message.toString(),
+                AttributeKey.stringKey("exception.detail"), exception.cause?.message.toString(),
                 SemanticAttributes.EXCEPTION_STACKTRACE, exception.stackTraceToString(),
                 SemanticAttributes.EXCEPTION_MESSAGE, exception.message.toString(),
             )
@@ -27,7 +27,7 @@ object TracingHelper {
     }
 
     fun Span.onClose(status: Status) {
-        if (!status.isOk && status.cause != null) {
+        if (!status.isOk) {
             val exception = status.asException()
             this.setExceptionStatus(exception)
         }
